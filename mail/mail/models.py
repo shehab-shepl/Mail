@@ -1,6 +1,9 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
+import datetime
+from django.utils import timezone
+
 
 class User(AbstractUser):
     pass
@@ -12,7 +15,7 @@ class Email(models.Model):
     recipients = models.ManyToManyField("User", related_name="emails_received")
     subject = models.CharField(max_length=255)
     body = models.TextField(blank=True)
-    timestamp = models.DateTimeField(auto_now_add=True)
+    timestamp = models.DateTimeField(default=datetime.datetime.now(),blank=True)
     read = models.BooleanField(default=False)
     archived = models.BooleanField(default=False)
 
@@ -23,7 +26,7 @@ class Email(models.Model):
             "recipients": [user.email for user in self.recipients.all()],
             "subject": self.subject,
             "body": self.body,
-            "timestamp": self.timestamp.strftime("%b %-d %Y, %-I:%M %p"),
+            "timestamp": self.timestamp.strftime("%b %#d %Y, %#I:%M %p"),
             "read": self.read,
             "archived": self.archived
         }
